@@ -16,11 +16,16 @@ public class StravaService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StravaService.class);
 
+    private final StravaUserSetupService userSetupService;
     private final StravaClient stravaClient;
     private final String subscriptionVerifyToken;
 
     @Autowired
-    public StravaService(final StravaClient stravaClient) {
+    public StravaService(
+            final StravaUserSetupService userSetupService,
+            final StravaClient stravaClient
+    ) {
+        this.userSetupService = userSetupService;
         this.stravaClient = stravaClient;
         this.subscriptionVerifyToken = UUID.randomUUID().toString();
         LOGGER.info("Subscription verify token: {}", subscriptionVerifyToken);
@@ -44,24 +49,6 @@ public class StravaService {
 
     public void requestShortLivedAccessTokenAndSetupUser(final String authorizationCode) throws IOException {
         final String token = stravaClient.getAuthToken(authorizationCode);
-        setupUser(token);
-        setupWebhook(token); // FIXME only once!
-    }
-
-    // FIXME async not working?
-    @Async
-    void setupUser(final String token) throws IOException {
-        LOGGER.info("Setup user: " + Thread.currentThread().getName());
-        // TODO store in DB, associate to DB
-        // retrieve last 30 outings
-        final List<SummaryActivity> activities = stravaClient.getActivities(token);
-
-        LOGGER.info("ok");
-    }
-
-    @Async
-    void setupWebhook(final String token) {
-        LOGGER.info("Setup webhook: " + Thread.currentThread().getName());
-
+        userSetupService.setupUser(token);
     }
 }
