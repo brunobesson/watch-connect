@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class StravaService {
@@ -18,51 +17,33 @@ public class StravaService {
     private static final Logger LOGGER = LoggerFactory.getLogger(StravaService.class);
 
     private final StravaUserSetupService userSetupService;
+    private final StravaSubscriptionService subscriptionService;
     private final StravaClient stravaClient;
-    private final String hostUrl;
-    private final String subscriptionVerifyToken;
+    private final String backendBaseUrl;
 
     private String subscriptionId;
 
     @Autowired
     public StravaService(
             final StravaUserSetupService userSetupService,
+            final StravaSubscriptionService subscriptionService,
             final StravaClient stravaClient,
-            @Value("${host.url}") final String hostUrl,
-            @Value("${strava.subscription}") final String subscriptionId // FIXME in db instead
+            @Value("${backend.base-url}") final String backendBaseUrl,
+            @Value("${strava.subscription.id}") final String subscriptionId // FIXME in db instead
     ) {
         this.userSetupService = userSetupService;
+        this.subscriptionService = subscriptionService;
         this.stravaClient = stravaClient;
-        this.hostUrl = hostUrl;
+        this.backendBaseUrl = backendBaseUrl;
 
         this.subscriptionId = Optional.ofNullable(subscriptionId).map(String::trim).orElse("");
 
-        this.subscriptionVerifyToken = UUID.randomUUID().toString();
-        LOGGER.info("Subscription verify token: {}", subscriptionVerifyToken);
+
     }
 
     @PostConstruct
     private void setupWebhook() throws IOException {
-        if (subscriptionId.isBlank()) {
-            requestSubscription();
-        } else {
-            try {
-                final StravaSubscription subscription = stravaClient.viewSubscription();
-                LOGGER.info("Subscription is ok: {}", subscription.getId());
-            } catch (IOException e) {
-                requestSubscription();
-            }
-        }
-    }
-
-    private void requestSubscription() throws IOException {
-        final StravaSubscription subscription
-                = stravaClient.requestSubscriptionCreation(hostUrl + "/strava/webhook", subscriptionVerifyToken);
-        LOGGER.info("New subscription: {}", subscription.getId());
-    }
-
-    public String getSubscriptionVerifyToken() {
-        return subscriptionVerifyToken;
+        subscriptionService.setupWebhook();
     }
 
     /**

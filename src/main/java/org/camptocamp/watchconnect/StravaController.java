@@ -1,6 +1,7 @@
 package org.camptocamp.watchconnect;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,10 +18,18 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 public class StravaController {
 
     private final StravaService stravaService;
+    private final String frontendBaseUrl;
+    private final String frontendSubscriptionError;
 
     @Autowired
-    public StravaController(final StravaService stravaService) {
+    public StravaController(
+            final StravaService stravaService,
+            @Value("${frontend.base-url}") final String frontendBaseUrl,
+            @Value("${frontend.subscription.error}") final String frontendSubscriptionError
+    ) {
         this.stravaService = stravaService;
+        this.frontendBaseUrl = frontendBaseUrl;
+        this.frontendSubscriptionError = frontendSubscriptionError;
     }
 
     @GetMapping("/exchange_token")
@@ -29,24 +38,24 @@ public class StravaController {
             @RequestParam("scope") final List<String> scopes
     ) {
         if (!stravaService.containsRequiredScopes(scopes)) {
-            return new ModelAndView("redirect:http://localhost:8080/baaad!"); // FIXME
+            return new ModelAndView("redirect:" + frontendBaseUrl + "/" + frontendSubscriptionError);
         }
         try {
             stravaService.requestShortLivedAccessTokenAndSetupUser(authorizationCode);
         } catch (final IOException e) {
-            return new ModelAndView("redirect:http://localhost:8080/baaad!"); // FIXME
+            return new ModelAndView("redirect:" + frontendBaseUrl + "/" + frontendSubscriptionError);
         }
-        return new ModelAndView("redirect:http://localhost:8080");
+        return new ModelAndView("redirect:" + frontendBaseUrl);
     }
 
-    // FIXME what happens if requested twice? maybe not here but on POST?
     @GetMapping("/webhook")
     public StravaSubscriptionValidation validateWebhookSubscription(
             @RequestParam("hub.mode") final String mode,
             @RequestParam("hub.challenge") final String challenge,
-            @RequestParam("hub.verify_token") final String token
+            @RequestParam("hub.verify_token") final String token,
+            @Value("${strava.subscription.verify-token}") final String subscriptionVerifyToken
     ) {
-        if ("subscribe".equals(mode) || !Objects.equals(token, stravaService.getSubscriptionVerifyToken())) {
+        if (!"subscribe".equals(mode) || !Objects.equals(token, subscriptionVerifyToken)) {
             throw new ResponseStatusException(FORBIDDEN);
         }
         return new StravaSubscriptionValidation(challenge);

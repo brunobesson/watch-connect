@@ -50,7 +50,7 @@ public class StravaClient {
         );
 
         @GET("push_subscriptions")
-        Call<StravaSubscription> viewSubscription(
+        Call<List<StravaSubscription>> viewSubscription(
                 @Query("client_id") String clientId,
                 @Query("client_secret") String clientSecret
         );
@@ -67,8 +67,8 @@ public class StravaClient {
     @Autowired
     public StravaClient(
             @Value("${strava.url}") final String baseUrl,
-            @Value("${strava.client_id}") final String clientId,
-            @Value("${strava.client_secret}") final String clientSecret
+            @Value("${strava.client-id}") final String clientId,
+            @Value("${strava.client-secret}") final String clientSecret
     ) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -104,11 +104,12 @@ public class StravaClient {
     ) throws IOException {
         final Response<StravaSubscription> response
                 = api.requestSubscriptionCreation(this.clientId, this.clientSecret, callbackUrl, verifyToken).execute();
+        // TODO properly check status & all, return only on success
         return response.body();
     }
 
-    public StravaSubscription viewSubscription() throws IOException {
-        final Response<StravaSubscription> response = api.viewSubscription(this.clientId, this.clientSecret).execute();
+    public List<StravaSubscription> getSubscriptions() throws IOException {
+        final Response<List<StravaSubscription>> response = api.viewSubscription(this.clientId, this.clientSecret).execute();
         return response.body();
     }
 
