@@ -2,6 +2,7 @@ package org.camptocamp.watchconnect.strava;
 
 import org.camptocamp.watchconnect.strava.api.StravaClient;
 import org.camptocamp.watchconnect.strava.dto.Scope;
+import org.camptocamp.watchconnect.strava.dto.StravaEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class StravaService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StravaService.class);
 
-    private final StravaUserSetupService userSetupService;
+    private final StravaUserService userService;
     private final StravaSubscriptionService subscriptionService;
     private final StravaClient stravaClient;
     private final String backendBaseUrl;
@@ -27,20 +28,18 @@ public class StravaService {
 
     @Autowired
     public StravaService(
-            final StravaUserSetupService userSetupService,
+            final StravaUserService userService,
             final StravaSubscriptionService subscriptionService,
             final StravaClient stravaClient,
             @Value("${backend.base-url}") final String backendBaseUrl,
             @Value("${strava.subscription.id}") final String subscriptionId // FIXME in db instead
     ) {
-        this.userSetupService = userSetupService;
+        this.userService = userService;
         this.subscriptionService = subscriptionService;
         this.stravaClient = stravaClient;
         this.backendBaseUrl = backendBaseUrl;
 
         this.subscriptionId = Optional.ofNullable(subscriptionId).map(String::trim).orElse("");
-
-
     }
 
     @PostConstruct
@@ -62,6 +61,10 @@ public class StravaService {
 
     public void requestShortLivedAccessTokenAndSetupUser(final String authorizationCode) throws IOException {
         final String token = stravaClient.getAuthToken(authorizationCode);
-        userSetupService.setupUser(token);
+        userService.setupUser(token);
+    }
+
+    public void handleWebhookEvent(final StravaEvent event) {
+        userService.handleWebhookEvent(event);
     }
 }

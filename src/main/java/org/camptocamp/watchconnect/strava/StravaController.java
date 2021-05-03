@@ -65,10 +65,8 @@ public class StravaController {
 
     @PostMapping("/webhook")
     public void webhookEvent(@Validated @RequestBody final StravaEvent event) {
-        // TODO: should return 200 immediatly
-        // TODO decide what we should do in such cases. do this async
-        event.getEventType();
+        stravaService.handleWebhookEvent(event);
     }
 
-    // TODO: admin part, e.g. close subscription
+    // TODO: admin part, e.g. close subscription?
 }

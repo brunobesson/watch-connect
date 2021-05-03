@@ -44,6 +44,12 @@ public class StravaClient {
                 @Query("per_page") Integer numberOfItemsPerPage
         );
 
+        @GET("activities/{id}")
+        Call<SummaryActivity> getActivity(
+                @Header("Authorization") String token,
+                @Path("id") String activityId
+        );
+
         @POST("push_subscriptions")
         Call<StravaSubscription> requestSubscriptionCreation(
                 @Query("client_id") String clientId,
@@ -98,6 +104,11 @@ public class StravaClient {
 
     public List<SummaryActivity> getActivities(final String token) throws IOException {
         final Response<List<SummaryActivity>> response = api.listAthleteActivities(bearer(token), null, null, 1, 30).execute();
+        return response.body();
+    }
+
+    public SummaryActivity getActivity(final String token, final String activityId) throws IOException {
+        final Response<SummaryActivity> response = api.getActivity(bearer(token), activityId).execute();
         return response.body();
     }
 

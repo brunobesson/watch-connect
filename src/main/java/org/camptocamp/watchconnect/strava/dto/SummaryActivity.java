@@ -13,6 +13,7 @@ public class SummaryActivity {
     private final String name;
     private final ActivityType activityType;
     private final String startDate;
+    private final String timezone;
     private final List<Float> startCoordinates;
     private final PolylineMap map;
 
@@ -22,6 +23,7 @@ public class SummaryActivity {
             @JsonProperty("name") final String name,
             @JsonProperty("type") final ActivityType activityType,
             @JsonProperty("start_date_local") final String startDate,
+            @JsonProperty("timezone") final String timezone,
             @JsonProperty("start_latlng") final List<Float> startCoordinates,
             @JsonProperty("map") final PolylineMap map
     ) {
@@ -29,6 +31,7 @@ public class SummaryActivity {
         this.name = name;
         this.activityType = activityType;
         this.startDate = startDate;
+        this.timezone = timezone;
         this.startCoordinates = startCoordinates;
         this.map = map;
     }
@@ -55,5 +58,9 @@ public class SummaryActivity {
 
     public List<Float> getStartCoordinates() {
         return startCoordinates;
+    }
+
+    public String getTimezone() {
+        return timezone;
     }
 }

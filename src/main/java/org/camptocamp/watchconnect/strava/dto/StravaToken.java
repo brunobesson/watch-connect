@@ -8,17 +8,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class StravaToken {
     private final String accessToken;
     private final String refreshToken;
-    private final String expiresAt;
+    private final Integer expiresAt;
+    private final Integer expiresIn;
 
     @JsonCreator
     public StravaToken(
             @JsonProperty("access_token") final String accessToken,
             @JsonProperty("refresh_token") final String refreshToken,
-            @JsonProperty("expires_at") final String expiresAt
+            @JsonProperty("expires_at") final Integer expiresAt,
+            @JsonProperty("expires_in") final Integer expiresIn
     ) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresAt = expiresAt;
+        this.expiresIn = expiresIn;
     }
 
     public String getAccessToken() {
@@ -29,7 +32,11 @@ public class StravaToken {
         return refreshToken;
     }
 
-    public String getExpiresAt() {
+    public Integer getExpiresAt() {
         return expiresAt;
+    }
+
+    public Integer getExpiresIn() {
+        return expiresIn;
     }
 }
