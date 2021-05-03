@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @RestController
 @RequestMapping("/strava")
@@ -47,7 +47,7 @@ public class StravaController {
             @RequestParam("hub.verify_token") final String token
     ) {
         if ("subscribe".equals(mode) || !Objects.equals(token, stravaService.getSubscriptionVerifyToken())) {
-            throw new ResponseStatusException(BAD_REQUEST);
+            throw new ResponseStatusException(FORBIDDEN);
         }
         return new StravaSubscriptionValidation(challenge);
     }
