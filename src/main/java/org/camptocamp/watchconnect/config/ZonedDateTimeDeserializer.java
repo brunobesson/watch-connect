@@ -1,4 +1,4 @@
-package org.camptocamp.watchconnect;
+package org.camptocamp.watchconnect.config;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

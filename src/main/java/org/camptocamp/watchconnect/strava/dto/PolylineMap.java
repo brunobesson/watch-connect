@@ -1,4 +1,4 @@
-package org.camptocamp.watchconnect;
+package org.camptocamp.watchconnect.strava.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

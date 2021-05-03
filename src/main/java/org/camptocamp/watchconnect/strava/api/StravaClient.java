@@ -1,8 +1,11 @@
-package org.camptocamp.watchconnect;
+package org.camptocamp.watchconnect.strava.api;
 
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import org.camptocamp.watchconnect.strava.dto.StravaSubscription;
+import org.camptocamp.watchconnect.strava.dto.StravaToken;
+import org.camptocamp.watchconnect.strava.dto.SummaryActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

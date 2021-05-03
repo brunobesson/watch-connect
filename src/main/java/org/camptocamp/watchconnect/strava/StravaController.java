@@ -1,5 +1,7 @@
-package org.camptocamp.watchconnect;
+package org.camptocamp.watchconnect.strava;
 
+import org.camptocamp.watchconnect.strava.dto.StravaEvent;
+import org.camptocamp.watchconnect.strava.dto.StravaSubscriptionValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;

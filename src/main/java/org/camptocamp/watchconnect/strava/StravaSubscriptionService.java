@@ -1,5 +1,7 @@
-package org.camptocamp.watchconnect;
+package org.camptocamp.watchconnect.strava;
 
+import org.camptocamp.watchconnect.strava.api.StravaClient;
+import org.camptocamp.watchconnect.strava.dto.StravaSubscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

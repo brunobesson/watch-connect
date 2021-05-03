@@ -1,13 +1,12 @@
-package org.camptocamp.watchconnect;
+package org.camptocamp.watchconnect.strava.dto;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Locale;
 
-public enum StravaEventAspect {
-    CREATE,
-    UPDATE,
-    DELETE;
+public enum StravaEventType {
+    ACTIVITY,
+    ATHLETE;
 
     @JsonValue
     public String value() {
